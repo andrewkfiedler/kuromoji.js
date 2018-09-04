@@ -2752,13 +2752,17 @@ function NodeDictionaryLoader(dic_path) {
 }
 
 function decompress(buffer, callback) {
-  console.log("decompress");
   var BASE64_MARKER = ";base64,";
   var base64Index = buffer.indexOf(BASE64_MARKER) + BASE64_MARKER.length;
   var base64 = buffer.substring(base64Index);
   buffer = Buffer.from(base64, "base64");
-  var typed_array = new Uint8Array(buffer);
-  callback(null, typed_array.buffer);
+  node_zlib.gunzip(buffer, function (err2, decompressed) {
+      if(err2) {
+          return callback(err2);
+      }
+      var typed_array = new Uint8Array(decompressed);
+      callback(null, typed_array.buffer);
+  });
 }
 
 NodeDictionaryLoader.prototype = Object.create(DictionaryLoader.prototype);

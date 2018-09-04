@@ -31,13 +31,17 @@ function NodeDictionaryLoader(dic_path) {
 }
 
 function decompress(buffer, callback) {
-  console.log("decompress");
   var BASE64_MARKER = ";base64,";
   var base64Index = buffer.indexOf(BASE64_MARKER) + BASE64_MARKER.length;
   var base64 = buffer.substring(base64Index);
   buffer = Buffer.from(base64, "base64");
-  var typed_array = new Uint8Array(buffer);
-  callback(null, typed_array.buffer);
+  node_zlib.gunzip(buffer, function (err2, decompressed) {
+      if(err2) {
+          return callback(err2);
+      }
+      var typed_array = new Uint8Array(decompressed);
+      callback(null, typed_array.buffer);
+  });
 }
 
 NodeDictionaryLoader.prototype = Object.create(DictionaryLoader.prototype);
@@ -50,62 +54,62 @@ NodeDictionaryLoader.prototype = Object.create(DictionaryLoader.prototype);
 NodeDictionaryLoader.prototype.loadArrayBuffer = function(file, callback) {
   switch (file) {
     case "base.dat.gz":
-      require(["./../../dict/base.dat"], file => {
+      require(["./../../dict/base.dat.gz"], file => {
         decompress(file, callback);
       });
       break;
     case "check.dat.gz":
-      require(["./../../dict/check.dat"], file => {
+      require(["./../../dict/check.dat.gz"], file => {
         decompress(file, callback);
       });
       break;
     case "tid.dat.gz":
-      require(["./../../dict/tid.dat"], file => {
+      require(["./../../dict/tid.dat.gz"], file => {
         decompress(file, callback);
       });
       break;
     case "tid_pos.dat.gz":
-      require(["./../../dict/tid_pos.dat"], file => {
+      require(["./../../dict/tid_pos.dat.gz"], file => {
         decompress(file, callback);
       });
       break;
     case "tid_map.dat.gz":
-      require(["./../../dict/tid_map.dat"], file => {
+      require(["./../../dict/tid_map.dat.gz"], file => {
         decompress(file, callback);
       });
       break;
     case "cc.dat.gz":
-      require(["./../../dict/cc.dat"], file => {
+      require(["./../../dict/cc.dat.gz"], file => {
         decompress(file, callback);
       });
       break;
     case "unk.dat.gz":
-      require(["./../../dict/unk.dat"], file => {
+      require(["./../../dict/unk.dat.gz"], file => {
         decompress(file, callback);
       });
       break;
     case "unk_pos.dat.gz":
-      require(["./../../dict/unk_pos.dat"], file => {
+      require(["./../../dict/unk_pos.dat.gz"], file => {
         decompress(file, callback);
       });
       break;
     case "unk_map.dat.gz":
-      require(["./../../dict/unk_map.dat"], file => {
+      require(["./../../dict/unk_map.dat.gz"], file => {
         decompress(file, callback);
       });
       break;
     case "unk_char.dat.gz":
-      require(["./../../dict/unk_char.dat"], file => {
+      require(["./../../dict/unk_char.dat.gz"], file => {
         decompress(file, callback);
       });
       break;
     case "unk_compat.dat.gz":
-      require(["./../../dict/unk_compat.dat"], file => {
+      require(["./../../dict/unk_compat.dat.gz"], file => {
         decompress(file, callback);
       });
       break;
     case "unk_invoke.dat.gz":
-      require(["./../../dict/unk_invoke.dat"], file => {
+      require(["./../../dict/unk_invoke.dat.gz"], file => {
         decompress(file, callback);
       });
       break;

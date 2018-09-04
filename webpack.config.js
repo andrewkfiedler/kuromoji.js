@@ -14,7 +14,7 @@ const serverConfig =  {
     module: {
         rules: [
             {
-                test:  /\.(dat)$/,
+                test:  /\.(gz)$/,
                 use: [
                     {
                         loader: 'url-loader',
@@ -42,7 +42,7 @@ const clientConfig = {
     module: {
         rules: [
             {
-                test:  /\.(dat)$/,
+                test:  /\.(gz)$/,
                 use: [
                     {
                         loader: 'url-loader',
