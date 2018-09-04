@@ -52,6 +52,7 @@ UnknownDictionary.prototype.loadUnknownDictionaries = function (unk_buffer, unk_
     this.loadDictionary(unk_buffer);
     this.loadPosVector(unk_pos_buffer);
     this.loadTargetMap(unk_map_buffer);
+    console.log('test');
     this.character_definition = CharacterDefinition.load(cat_map_buffer, compat_cat_map_buffer, invoke_def_buffer);
 };
 

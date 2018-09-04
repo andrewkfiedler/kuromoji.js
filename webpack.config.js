@@ -10,6 +10,22 @@ const serverConfig =  {
     target: 'node',
     optimization: {
         minimize: false
+    },
+    module: {
+        rules: [
+            {
+                test:  /\.(dat)$/,
+                use: [
+                    {
+                        loader: 'url-loader',
+                        options: {
+                            name: '[name].[ext]',
+                            mimetype: 'application/octet-stream'
+                        },
+                    }
+                ]
+            }
+        ]
     }
 };
 
@@ -22,6 +38,22 @@ const clientConfig = {
     target: 'web',
     optimization: {
         minimize: false
+    },
+    module: {
+        rules: [
+            {
+                test:  /\.(dat)$/,
+                use: [
+                    {
+                        loader: 'url-loader',
+                        options: {
+                            name: '[name].[ext]',
+                            mimetype: 'application/octet-stream'
+                        },
+                    }
+                ]
+            }
+        ]
     }
 };
 

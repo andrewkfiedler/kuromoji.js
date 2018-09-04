@@ -27,6 +27,9 @@ var DictionaryLoader = require("./loader/NodeDictionaryLoader");
  * @constructor
  */
 function TokenizerBuilder(option) {
+    if (!option) {
+        return;
+    }
     if (option.dicPath == null) {
         this.dic_path = "dict/";
     } else {

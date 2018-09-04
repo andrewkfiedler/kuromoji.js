@@ -3,6 +3,12 @@ module.exports =
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
 /******/
+/******/ 	// object to store loaded chunks
+/******/ 	// "0" means "already loaded"
+/******/ 	var installedChunks = {
+/******/ 		0: 0
+/******/ 	};
+/******/
 /******/ 	// The require function
 /******/ 	function __webpack_require__(moduleId) {
 /******/
@@ -27,6 +33,26 @@ module.exports =
 /******/ 		return module.exports;
 /******/ 	}
 /******/
+/******/ 	// This file contains only the entry chunk.
+/******/ 	// The chunk loading function for additional chunks
+/******/ 	__webpack_require__.e = function requireEnsure(chunkId) {
+/******/ 		var promises = [];
+/******/
+/******/
+/******/ 		// require() chunk loading for javascript
+/******/
+/******/ 		// "0" is the signal for "already loaded"
+/******/ 		if(installedChunks[chunkId] !== 0) {
+/******/ 			var chunk = require("./" + chunkId + ".kuromoji.node.js");
+/******/ 			var moreModules = chunk.modules, chunkIds = chunk.ids;
+/******/ 			for(var moduleId in moreModules) {
+/******/ 				modules[moduleId] = moreModules[moduleId];
+/******/ 			}
+/******/ 			for(var i = 0; i < chunkIds.length; i++)
+/******/ 				installedChunks[chunkIds[i]] = 0;
+/******/ 		}
+/******/ 		return Promise.all(promises);
+/******/ 	};
 /******/
 /******/ 	// expose the modules object (__webpack_modules__)
 /******/ 	__webpack_require__.m = modules;
@@ -79,6 +105,13 @@ module.exports =
 /******/
 /******/ 	// __webpack_public_path__
 /******/ 	__webpack_require__.p = "";
+/******/
+/******/ 	// uncaught error handler for webpack runtime
+/******/ 	__webpack_require__.oe = function(err) {
+/******/ 		process.nextTick(function() {
+/******/ 			throw err; // catch this error by using import().catch()
+/******/ 		});
+/******/ 	};
 /******/
 /******/
 /******/ 	// Load entry module and return exports
@@ -1702,6 +1735,7 @@ UnknownDictionary.prototype.loadUnknownDictionaries = function (unk_buffer, unk_
     this.loadDictionary(unk_buffer);
     this.loadPosVector(unk_pos_buffer);
     this.loadTargetMap(unk_map_buffer);
+    console.log('test');
     this.character_definition = CharacterDefinition.load(cat_map_buffer, compat_cat_map_buffer, invoke_def_buffer);
 };
 
@@ -2155,6 +2189,9 @@ var DictionaryLoader = __webpack_require__(18);
  * @constructor
  */
 function TokenizerBuilder(option) {
+    if (!option) {
+        return;
+    }
     if (option.dicPath == null) {
         this.dic_path = "dict/";
     } else {
@@ -2711,7 +2748,17 @@ var DictionaryLoader = __webpack_require__(21);
  * @constructor
  */
 function NodeDictionaryLoader(dic_path) {
-    DictionaryLoader.apply(this, [ dic_path ]);
+  DictionaryLoader.apply(this, [dic_path]);
+}
+
+function decompress(buffer, callback) {
+  console.log("decompress");
+  var BASE64_MARKER = ";base64,";
+  var base64Index = buffer.indexOf(BASE64_MARKER) + BASE64_MARKER.length;
+  var base64 = buffer.substring(base64Index);
+  buffer = Buffer.from(base64, "base64");
+  var typed_array = new Uint8Array(buffer);
+  callback(null, typed_array.buffer);
 }
 
 NodeDictionaryLoader.prototype = Object.create(DictionaryLoader.prototype);
@@ -2721,19 +2768,77 @@ NodeDictionaryLoader.prototype = Object.create(DictionaryLoader.prototype);
  * @param {string} file Dictionary file path
  * @param {NodeDictionaryLoader~onLoad} callback Callback function
  */
-NodeDictionaryLoader.prototype.loadArrayBuffer = function (file, callback) {
-    fs.readFile(file, function (err, buffer) {
-        if(err) {
-            return callback(err);
+NodeDictionaryLoader.prototype.loadArrayBuffer = function(file, callback) {
+  switch (file) {
+    case "base.dat.gz":
+      __webpack_require__.e(/* AMD require */ 1).then(function() { var __WEBPACK_AMD_REQUIRE_ARRAY__ = [__webpack_require__(28)]; (file => {
+        decompress(file, callback);
+      }).apply(null, __WEBPACK_AMD_REQUIRE_ARRAY__);}).catch(__webpack_require__.oe);
+      break;
+    case "check.dat.gz":
+      __webpack_require__.e(/* AMD require */ 2).then(function() { var __WEBPACK_AMD_REQUIRE_ARRAY__ = [__webpack_require__(29)]; (file => {
+        decompress(file, callback);
+      }).apply(null, __WEBPACK_AMD_REQUIRE_ARRAY__);}).catch(__webpack_require__.oe);
+      break;
+    case "tid.dat.gz":
+      __webpack_require__.e(/* AMD require */ 3).then(function() { var __WEBPACK_AMD_REQUIRE_ARRAY__ = [__webpack_require__(30)]; (file => {
+        decompress(file, callback);
+      }).apply(null, __WEBPACK_AMD_REQUIRE_ARRAY__);}).catch(__webpack_require__.oe);
+      break;
+    case "tid_pos.dat.gz":
+      __webpack_require__.e(/* AMD require */ 4).then(function() { var __WEBPACK_AMD_REQUIRE_ARRAY__ = [__webpack_require__(31)]; (file => {
+        decompress(file, callback);
+      }).apply(null, __WEBPACK_AMD_REQUIRE_ARRAY__);}).catch(__webpack_require__.oe);
+      break;
+    case "tid_map.dat.gz":
+      __webpack_require__.e(/* AMD require */ 5).then(function() { var __WEBPACK_AMD_REQUIRE_ARRAY__ = [__webpack_require__(32)]; (file => {
+        decompress(file, callback);
+      }).apply(null, __WEBPACK_AMD_REQUIRE_ARRAY__);}).catch(__webpack_require__.oe);
+      break;
+    case "cc.dat.gz":
+      __webpack_require__.e(/* AMD require */ 6).then(function() { var __WEBPACK_AMD_REQUIRE_ARRAY__ = [__webpack_require__(33)]; (file => {
+        decompress(file, callback);
+      }).apply(null, __WEBPACK_AMD_REQUIRE_ARRAY__);}).catch(__webpack_require__.oe);
+      break;
+    case "unk.dat.gz":
+      __webpack_require__.e(/* AMD require */ 7).then(function() { var __WEBPACK_AMD_REQUIRE_ARRAY__ = [__webpack_require__(34)]; (file => {
+        decompress(file, callback);
+      }).apply(null, __WEBPACK_AMD_REQUIRE_ARRAY__);}).catch(__webpack_require__.oe);
+      break;
+    case "unk_pos.dat.gz":
+      __webpack_require__.e(/* AMD require */ 8).then(function() { var __WEBPACK_AMD_REQUIRE_ARRAY__ = [__webpack_require__(35)]; (file => {
+        decompress(file, callback);
+      }).apply(null, __WEBPACK_AMD_REQUIRE_ARRAY__);}).catch(__webpack_require__.oe);
+      break;
+    case "unk_map.dat.gz":
+      __webpack_require__.e(/* AMD require */ 9).then(function() { var __WEBPACK_AMD_REQUIRE_ARRAY__ = [__webpack_require__(36)]; (file => {
+        decompress(file, callback);
+      }).apply(null, __WEBPACK_AMD_REQUIRE_ARRAY__);}).catch(__webpack_require__.oe);
+      break;
+    case "unk_char.dat.gz":
+      __webpack_require__.e(/* AMD require */ 10).then(function() { var __WEBPACK_AMD_REQUIRE_ARRAY__ = [__webpack_require__(37)]; (file => {
+        decompress(file, callback);
+      }).apply(null, __WEBPACK_AMD_REQUIRE_ARRAY__);}).catch(__webpack_require__.oe);
+      break;
+    case "unk_compat.dat.gz":
+      __webpack_require__.e(/* AMD require */ 11).then(function() { var __WEBPACK_AMD_REQUIRE_ARRAY__ = [__webpack_require__(38)]; (file => {
+        decompress(file, callback);
+      }).apply(null, __WEBPACK_AMD_REQUIRE_ARRAY__);}).catch(__webpack_require__.oe);
+      break;
+    case "unk_invoke.dat.gz":
+      __webpack_require__.e(/* AMD require */ 12).then(function() { var __WEBPACK_AMD_REQUIRE_ARRAY__ = [__webpack_require__(39)]; (file => {
+        decompress(file, callback);
+      }).apply(null, __WEBPACK_AMD_REQUIRE_ARRAY__);}).catch(__webpack_require__.oe);
+      break;
+    default:
+      fs.readFile(file, function(err, buffer) {
+        if (err) {
+          return callback(err);
         }
-        node_zlib.gunzip(buffer, function (err2, decompressed) {
-            if(err2) {
-                return callback(err2);
-            }
-            var typed_array = new Uint8Array(decompressed);
-            callback(null, typed_array.buffer);
-        });
-    });
+        decompress(buffer, callback);
+      });
+      break;
+  }
 };
 
 /**
@@ -2791,104 +2896,148 @@ var DynamicDictionaries = __webpack_require__(4);
  * @constructor
  */
 function DictionaryLoader(dic_path) {
-    this.dic = new DynamicDictionaries();
-    this.dic_path = dic_path;
+  this.dic = new DynamicDictionaries();
+  this.dic_path = dic_path;
 }
 
-DictionaryLoader.prototype.loadArrayBuffer = function (file, callback) {
-    throw new Error("DictionaryLoader#loadArrayBuffer should be overwrite");
+DictionaryLoader.prototype.loadArrayBuffer = function(file, callback) {
+  throw new Error("DictionaryLoader#loadArrayBuffer should be overwrite");
 };
 
 /**
  * Load dictionary files
  * @param {DictionaryLoader~onLoad} load_callback Callback function called after loaded
  */
-DictionaryLoader.prototype.load = function (load_callback) {
-    var dic = this.dic;
-    var dic_path = this.dic_path;
-    var loadArrayBuffer = this.loadArrayBuffer;
+DictionaryLoader.prototype.load = function(load_callback) {
+  var dic = this.dic;
+  var dic_path = this.dic_path;
+  var loadArrayBuffer = this.loadArrayBuffer;
 
-    async.parallel([
-        // Trie
-        function (callback) {
-            async.map([ "base.dat.gz", "check.dat.gz" ], function (filename, _callback) {
-                loadArrayBuffer(path.join(dic_path, filename), function (err, buffer) {
-                    if(err) {
-                        return _callback(err);
-                    }
-                    _callback(null, buffer);
-                });
-            }, function (err, buffers) {
-                if(err) {
-                    return callback(err);
+  async.parallel(
+    [
+      // Trie
+      function(callback) {
+        async.map(
+          ["base.dat.gz", "check.dat.gz"],
+          function(filename, _callback) {
+            loadArrayBuffer(
+              dic_path ? path.join(dic_path, filename) : filename,
+              function(err, buffer) {
+                if (err) {
+                  return _callback(err);
                 }
-                var base_buffer = new Int32Array(buffers[0]);
-                var check_buffer = new Int32Array(buffers[1]);
+                _callback(null, buffer);
+              }
+            );
+          },
+          function(err, buffers) {
+            if (err) {
+              return callback(err);
+            }
+            var base_buffer = new Int32Array(buffers[0]);
+            var check_buffer = new Int32Array(buffers[1]);
+            dic.loadTrie(base_buffer, check_buffer);
+            callback(null);
+          }
+        );
+      },
+      // Token info dictionaries
+      function(callback) {
+        async.map(
+          ["tid.dat.gz", "tid_pos.dat.gz", "tid_map.dat.gz"],
+          function(filename, _callback) {
+            loadArrayBuffer(dic_path ? path.join(dic_path, filename) : filename, function(
+              err,
+              buffer
+            ) {
+              if (err) {
+                return _callback(err);
+              }
+              _callback(null, buffer);
+            });
+          },
+          function(err, buffers) {
+            if (err) {
+              return callback(err);
+            }
+            var token_info_buffer = new Uint8Array(buffers[0]);
+            var pos_buffer = new Uint8Array(buffers[1]);
+            var target_map_buffer = new Uint8Array(buffers[2]);
 
-                dic.loadTrie(base_buffer, check_buffer);
-                callback(null);
+            dic.loadTokenInfoDictionaries(
+              token_info_buffer,
+              pos_buffer,
+              target_map_buffer
+            );
+            callback(null);
+          }
+        );
+      },
+      // Connection cost matrix
+      function(callback) {
+        loadArrayBuffer(dic_path ? path.join(dic_path, "cc.dat.gz") : "cc.dat.gz", function(
+          err,
+          buffer
+        ) {
+          if (err) {
+            return callback(err);
+          }
+          var cc_buffer = new Int16Array(buffer);
+          dic.loadConnectionCosts(cc_buffer);
+          callback(null);
+        });
+      },
+      // Unknown dictionaries
+      function(callback) {
+        async.map(
+          [
+            "unk.dat.gz",
+            "unk_pos.dat.gz",
+            "unk_map.dat.gz",
+            "unk_char.dat.gz",
+            "unk_compat.dat.gz",
+            "unk_invoke.dat.gz"
+          ],
+          function(filename, _callback) {
+            loadArrayBuffer(dic_path ? path.join(dic_path, filename) : filename, function(
+              err,
+              buffer
+            ) {
+              if (err) {
+                return _callback(err);
+              }
+              _callback(null, buffer);
             });
-        },
-        // Token info dictionaries
-        function (callback) {
-            async.map([ "tid.dat.gz", "tid_pos.dat.gz", "tid_map.dat.gz" ], function (filename, _callback) {
-                loadArrayBuffer(path.join(dic_path, filename), function (err, buffer) {
-                    if(err) {
-                        return _callback(err);
-                    }
-                    _callback(null, buffer);
-                });
-            }, function (err, buffers) {
-                if(err) {
-                    return callback(err);
-                }
-                var token_info_buffer = new Uint8Array(buffers[0]);
-                var pos_buffer = new Uint8Array(buffers[1]);
-                var target_map_buffer = new Uint8Array(buffers[2]);
+          },
+          function(err, buffers) {
+            if (err) {
+              return callback(err);
+            }
+            var unk_buffer = new Uint8Array(buffers[0]);
+            var unk_pos_buffer = new Uint8Array(buffers[1]);
+            var unk_map_buffer = new Uint8Array(buffers[2]);
+            var cat_map_buffer = new Uint8Array(buffers[3]);
+            var compat_cat_map_buffer = new Uint32Array(buffers[4]);
+            var invoke_def_buffer = new Uint8Array(buffers[5]);
 
-                dic.loadTokenInfoDictionaries(token_info_buffer, pos_buffer, target_map_buffer);
-                callback(null);
-            });
-        },
-        // Connection cost matrix
-        function (callback) {
-            loadArrayBuffer(path.join(dic_path, "cc.dat.gz"), function (err, buffer) {
-                if(err) {
-                    return callback(err);
-                }
-                var cc_buffer = new Int16Array(buffer);
-                dic.loadConnectionCosts(cc_buffer);
-                callback(null);
-            });
-        },
-        // Unknown dictionaries
-        function (callback) {
-            async.map([ "unk.dat.gz", "unk_pos.dat.gz", "unk_map.dat.gz", "unk_char.dat.gz", "unk_compat.dat.gz", "unk_invoke.dat.gz" ], function (filename, _callback) {
-                loadArrayBuffer(path.join(dic_path, filename), function (err, buffer) {
-                    if(err) {
-                        return _callback(err);
-                    }
-                    _callback(null, buffer);
-                });
-            }, function (err, buffers) {
-                if(err) {
-                    return callback(err);
-                }
-                var unk_buffer = new Uint8Array(buffers[0]);
-                var unk_pos_buffer = new Uint8Array(buffers[1]);
-                var unk_map_buffer = new Uint8Array(buffers[2]);
-                var cat_map_buffer = new Uint8Array(buffers[3]);
-                var compat_cat_map_buffer = new Uint32Array(buffers[4]);
-                var invoke_def_buffer = new Uint8Array(buffers[5]);
-
-                dic.loadUnknownDictionaries(unk_buffer, unk_pos_buffer, unk_map_buffer, cat_map_buffer, compat_cat_map_buffer, invoke_def_buffer);
-                // dic.loadUnknownDictionaries(char_buffer, unk_buffer);
-                callback(null);
-            });
-        }
-    ], function (err) {
-        load_callback(err, dic);
-    });
+            dic.loadUnknownDictionaries(
+              unk_buffer,
+              unk_pos_buffer,
+              unk_map_buffer,
+              cat_map_buffer,
+              compat_cat_map_buffer,
+              invoke_def_buffer
+            );
+            // dic.loadUnknownDictionaries(char_buffer, unk_buffer);
+            callback(null);
+          }
+        );
+      }
+    ],
+    function(err) {
+      load_callback(err, dic);
+    }
+  );
 };
 
 /**
