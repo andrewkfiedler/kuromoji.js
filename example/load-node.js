@@ -17,7 +17,8 @@
 
 "use strict";
 
-var kuromoji = require("../src/kuromoji");
+var kuromoji = require("../dist/kuromoji.node");
+console.log(kuromoji);
 var DIC_DIR = "dict/";
 
 // Load dictionaries from file, and prepare tokenizer
